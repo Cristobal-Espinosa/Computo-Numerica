@@ -87,3 +87,74 @@ print("\nDólares comprados:", round(dolares_comprados, 2))
 print("Pesos finales:", round(pesos_finales, 2))
 print("Ganancia:", round(ganancia, 2))
 print("Rentabilidad (%):", round(rentabilidad, 2))
+
+
+# Precios aproximados correspondientes a la compra y venta
+
+precio_compra_aprox = precios_aproximados[indice_minimo]
+precio_venta_aprox = precios_aproximados[indice_maximo]
+
+
+# Cantidad de dólares usando precios aproximados
+
+dolares_aprox = monto_inicial / precio_compra_aprox
+
+
+# Pesos finales usando precios aproximados
+
+pesos_finales_aprox = dolares_aprox * precio_venta_aprox
+
+
+# Ganancia usando precios aproximados
+
+ganancia_aprox = pesos_finales_aprox - monto_inicial
+
+
+# Rentabilidad usando precios aproximados
+
+rentabilidad_aprox = (ganancia_aprox / monto_inicial) * 100
+
+
+print("\n--- SIMULACIÓN CON PRECIOS APROXIMADOS ---")
+
+print("Precio de compra aproximado:", precio_compra_aprox)
+print("Precio de venta aproximado:", precio_venta_aprox)
+
+print("Dólares comprados:", round(dolares_aprox, 2))
+print("Pesos finales:", round(pesos_finales_aprox, 2))
+print("Ganancia:", round(ganancia_aprox, 2))
+print("Rentabilidad (%):", round(rentabilidad_aprox, 2))
+
+# Diferencia entre la ganancia real y la aproximada
+
+error_ganancia_absoluto = abs(ganancia - ganancia_aprox)
+
+error_ganancia_relativo = (
+    error_ganancia_absoluto / abs(ganancia)
+) * 100
+
+
+# Diferencia en la rentabilidad
+
+error_rentabilidad = abs(rentabilidad - rentabilidad_aprox)
+
+
+print("\n--- ERROR PRODUCIDO POR LA APROXIMACIÓN ---")
+
+print("Ganancia real:", round(ganancia, 2))
+print("Ganancia aproximada:", round(ganancia_aprox, 2))
+
+print("\nError absoluto en la ganancia:",
+      round(error_ganancia_absoluto, 2))
+
+print("Error relativo en la ganancia (%):",
+      round(error_ganancia_relativo, 4))
+
+print("\nRentabilidad real (%):",
+      round(rentabilidad, 4))
+
+print("Rentabilidad aproximada (%):",
+      round(rentabilidad_aprox, 4))
+
+print("Diferencia en rentabilidad (puntos porcentuales):",
+      round(error_rentabilidad, 4))
