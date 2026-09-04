@@ -87,4 +87,3 @@ print("\nDólares comprados:", round(dolares_comprados, 2))
 print("Pesos finales:", round(pesos_finales, 2))
 print("Ganancia:", round(ganancia, 2))
 print("Rentabilidad (%):", round(rentabilidad, 2))
-#Hola cristobal
