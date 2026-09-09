@@ -1,160 +1,141 @@
 import numpy as np
 from cargar_datos import precios, years, meses
 
-def redondear_cifras_significativas(numeros, cifras):
-    
+def redondear_cifras_significativas(numeros, cifras): 
     factor = 10 ** (cifras - 1 - np.floor(np.log10(np.abs(numeros))))
-    
-    return np.round(numeros * factor) / factor
+    redondeo = np.round(numeros * factor) / factor
+    return redondeo
 
 precios_aproximados = redondear_cifras_significativas(precios, 2)
-
-error_absoluto = np.abs(precios - precios_aproximados)
-
-error_relativo = (error_absoluto / precios) * 100
-
-
 print("Precios originales:")
 print(precios)
 
 print("\nPrecios aproximados a 2 cifras significativas:")
 print(precios_aproximados)
 
+error_absoluto = np.abs(precios - precios_aproximados)
 print("\nError absoluto:")
 print(error_absoluto)
 
-print("\nError relativo (%):")
+error_relativo = (error_absoluto / precios) * 100
+print("\nError relativo:")
 print(error_relativo)
 
 indice_mayor_error = np.argmax(error_relativo)
 
-print("\n--- MAYOR ERROR RELATIVO ---")
-
-print("Año:", years[indice_mayor_error])
-print("Mes:", meses[indice_mayor_error])
+print("\nMAYOR ERROR RELATIVO")
+print("Año:", years[indice_mayor_error], "/Mes:", meses[indice_mayor_error])
 print("Precio original:", precios[indice_mayor_error])
 print("Precio aproximado:", precios_aproximados[indice_mayor_error])
 print("Error absoluto:", round(error_absoluto[indice_mayor_error], 2))
-print("Error relativo (%):", round(error_relativo[indice_mayor_error], 4))
-
+print("Error relativo:", round(error_relativo[indice_mayor_error], 4))
 
 indice_minimo = np.argmin(precios)
 indice_maximo = np.argmax(precios)
 
-print("\n--- PRECIO MÍNIMO ---")
-print("Año:", years[indice_minimo])
-print("Mes:", meses[indice_minimo])
-print("Precio:", precios[indice_minimo])
+print("\nPRECIO MINIMO")
+print("Año:", years[indice_minimo], "/Mes:", meses[indice_minimo], "/Precio:", precios[indice_minimo])
 
-print("\n--- PRECIO MÁXIMO ---")
-print("Año:", years[indice_maximo])
-print("Mes:", meses[indice_maximo])
-print("Precio:", precios[indice_maximo])
+print("\nPRECIO MAXIMO")
+print("Año:", years[indice_maximo], "/Mes:", meses[indice_maximo], "/Precio:", precios[indice_maximo])
 
 monto_inicial = 1000000
 
 precio_compra = precios[indice_minimo]
 precio_venta = precios[indice_maximo]
 
-# Cantidad de dólares comprados
 dolares_comprados = monto_inicial / precio_compra
 
-# Pesos obtenidos al vender
 pesos_finales = dolares_comprados * precio_venta
 
-# Ganancia
 ganancia = pesos_finales - monto_inicial
 
-# Rentabilidad
 rentabilidad = (ganancia / monto_inicial) * 100
 
 
-print("\n--- SIMULACIÓN COMPRA Y VENTA ---")
+print("\nSIMULACION COMPRA Y VENTA")
 
 print("Monto inicial:", monto_inicial)
-
 print("\nCompra:")
-print("Año:", years[indice_minimo])
-print("Mes:", meses[indice_minimo])
-print("Precio de compra:", precio_compra)
+print("Año:", years[indice_minimo], "/Mes:", meses[indice_minimo], "/Precio:", precio_compra)
 
 print("\nVenta:")
-print("Año:", years[indice_maximo])
-print("Mes:", meses[indice_maximo])
-print("Precio de venta:", precio_venta)
+print("Año:", years[indice_maximo], "/Mes:", meses[indice_maximo], "/Precio:", precio_venta)
 
 print("\nDólares comprados:", round(dolares_comprados, 2))
 print("Pesos finales:", round(pesos_finales, 2))
 print("Ganancia:", round(ganancia, 2))
-print("Rentabilidad (%):", round(rentabilidad, 2))
-
-
-# Precios aproximados correspondientes a la compra y venta
+print("Rentabilidad:", round(rentabilidad, 2))
 
 precio_compra_aprox = precios_aproximados[indice_minimo]
 precio_venta_aprox = precios_aproximados[indice_maximo]
 
-
-# Cantidad de dólares usando precios aproximados
-
 dolares_aprox = monto_inicial / precio_compra_aprox
-
-
-# Pesos finales usando precios aproximados
 
 pesos_finales_aprox = dolares_aprox * precio_venta_aprox
 
-
-# Ganancia usando precios aproximados
-
 ganancia_aprox = pesos_finales_aprox - monto_inicial
-
-
-# Rentabilidad usando precios aproximados
 
 rentabilidad_aprox = (ganancia_aprox / monto_inicial) * 100
 
-
-print("\n--- SIMULACIÓN CON PRECIOS APROXIMADOS ---")
-
+print("\nSIMULACIÓN CON PRECIOS APROXIMADOS")
 print("Precio de compra aproximado:", precio_compra_aprox)
 print("Precio de venta aproximado:", precio_venta_aprox)
-
-print("Dólares comprados:", round(dolares_aprox, 2))
+print("Dolares comprados:", round(dolares_aprox, 2))
 print("Pesos finales:", round(pesos_finales_aprox, 2))
 print("Ganancia:", round(ganancia_aprox, 2))
-print("Rentabilidad (%):", round(rentabilidad_aprox, 2))
+print("Rentabilidad:", round(rentabilidad_aprox, 2))
 
-# Diferencia entre la ganancia real y la aproximada
+error_compra = error_relativo[indice_minimo]
+error_venta = error_relativo[indice_maximo]
 
-error_ganancia_absoluto = abs(ganancia - ganancia_aprox)
+error_dolares_aprox = error_compra
 
-error_ganancia_relativo = (
-    error_ganancia_absoluto / abs(ganancia)
-) * 100
+error_pesos_finales_aprox = error_dolares_aprox + error_venta
+
+error_pesos_finales_absoluto = (error_pesos_finales_aprox / 100) * pesos_finales_aprox
+
+error_ganancia_absoluto = error_pesos_finales_absoluto
+
+error_ganancia_relativo = (error_ganancia_absoluto / abs(ganancia_aprox)) * 100
 
 
-# Diferencia en la rentabilidad
+print("\nERROR PROPAGADO EN LA GANANCIA")
 
-error_rentabilidad = abs(rentabilidad - rentabilidad_aprox)
+print("Error relativo precio compra:", round(error_compra, 4))
+print("Error relativo precio venta:", round(error_venta, 4))
+
+print("\nError relativo pesos finales:", round(error_pesos_finales_aprox, 4))
+print("Error absoluto pesos finales:", round(error_pesos_finales_absoluto, 2))
+
+print("\nGanancia:", round(ganancia_aprox, 2), "+/-", round(error_ganancia_absoluto, 2))
+print("Error relativo en la ganancia:", round(error_ganancia_relativo, 4))
 
 
-print("\n--- ERROR PRODUCIDO POR LA APROXIMACIÓN ---")
+precios_aprox_3cifras = redondear_cifras_significativas(precios, 3)
 
-print("Ganancia real:", round(ganancia, 2))
-print("Ganancia aproximada:", round(ganancia_aprox, 2))
+precio_dic2022 = precios_aprox_3cifras[11]
+precio_dic2023 = precios_aprox_3cifras[23]
 
-print("\nError absoluto en la ganancia:",
-      round(error_ganancia_absoluto, 2))
+delta_p = precio_dic2023 - precio_dic2022
 
-print("Error relativo en la ganancia (%):",
-      round(error_ganancia_relativo, 4))
+error_dic2022 = abs(precios[11] - precio_dic2022)
+error_dic2023 = abs(precios[23] - precio_dic2023)
 
-print("\nRentabilidad real (%):",
-      round(rentabilidad, 4))
+error_delta = error_dic2022 + error_dic2023
 
-print("Rentabilidad aproximada (%):",
-      round(rentabilidad_aprox, 4))
+error_delta_relativo = (error_delta / abs(delta_p)) * 100
 
-print("Diferencia en rentabilidad (puntos porcentuales):",
-      round(error_rentabilidad, 4))
+
+print("\nCANCELACION DICIEMBRE 2022 VS 2023")
+
+print("Precio dic 2022 (3 cifras):", precio_dic2022, "+/-", round(error_dic2022, 2))
+print("Precio dic 2023 (3 cifras):", precio_dic2023, "+/-", round(error_dic2023, 2))
+
+print("\nDelta P:", round(delta_p, 2), "+/-", round(error_delta, 2))
+print("Error relativo (%):", round(error_delta_relativo, 4))
+
+if error_delta > abs(delta_p):
+    print("\nEl error es mayor que la variacion, no se puede afirmar si el dolar subio o bajo")
+else:
+    print("\nLa variacion es mayor que el error, si se puede afirmar la tendencia")
