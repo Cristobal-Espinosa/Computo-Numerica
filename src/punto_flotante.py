@@ -44,7 +44,7 @@ plt.close()
 dif_float32 = np.float32(874.67) - np.float32(875.66)
 dif_float64 = np.float64(874.67) - np.float64(875.66)
 
-print("\nB4 CANCELACION EN LA MAQUINA")
+print("\nCANCELACION EN LA MAQUINA")
 print("874.67 - 875.66 en float32:", dif_float32)
 print("874.67 - 875.66 en float64:", dif_float64)
 print("Diferencia entre ambos:", abs(float(dif_float32) - float(dif_float64)))
