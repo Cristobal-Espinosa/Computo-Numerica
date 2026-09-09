@@ -1,4 +1,6 @@
 import numpy as np
+import os
+import matplotlib.pyplot as plt
 from cargar_datos import precios, years, meses
 
 def redondear_cifras_significativas(numeros, cifras): 
@@ -139,3 +141,80 @@ if error_delta > abs(delta_p):
     print("\nEl error es mayor que la variacion, no se puede afirmar si el dolar subio o bajo")
 else:
     print("\nLa variacion es mayor que el error, si se puede afirmar la tendencia")
+    
+
+carpeta = os.path.dirname(os.path.abspath(__file__))
+carpeta_graficos = os.path.join(carpeta, "..", "graficos")
+os.makedirs(carpeta_graficos, exist_ok=True)
+
+etiquetas = [str(meses[i])[:3] + " " + str(years[i]) for i in range(len(precios))]
+
+plt.figure(figsize=(12, 5))
+plt.plot(precios, marker="o", markersize=3)
+plt.xticks(range(0, len(precios), 3), etiquetas[::3], rotation=45)
+plt.title("Dolar observado 2022-2025")
+plt.xlabel("Mes")
+plt.ylabel("Precio")
+plt.tight_layout()
+plt.savefig(os.path.join(carpeta_graficos, "serie_dolar.png"))
+plt.close()
+
+
+variacion_mensual = precios[1:] - precios[:-1]
+
+plt.figure(figsize=(12, 5))
+plt.bar(range(len(variacion_mensual)), variacion_mensual)
+plt.axhline(0, color="black", linewidth=0.8)
+plt.xticks(range(0, len(variacion_mensual), 3), etiquetas[1::3], rotation=45)
+plt.title("Variacion mes a mes del dolar")
+plt.xlabel("Mes")
+plt.ylabel("Delta P")
+plt.tight_layout()
+plt.savefig(os.path.join(carpeta_graficos, "variacion_mensual.png"))
+plt.close()
+
+
+plt.figure(figsize=(12, 5))
+plt.bar(range(len(error_absoluto)), error_absoluto, color="orange")
+plt.xticks(range(0, len(error_absoluto), 3), etiquetas[::3], rotation=45)
+plt.title("Error absoluto por redondeo a 2 cifras significativas")
+plt.xlabel("Mes")
+plt.ylabel("Error absoluto")
+plt.tight_layout()
+plt.savefig(os.path.join(carpeta_graficos, "error_representacion.png"))
+plt.close()
+
+precio_compra_g4 = precios_aproximados[indice_minimo]
+error_compra_g4 = error_relativo[indice_minimo]
+
+meses_posteriores = list(range(indice_minimo + 1, len(precios)))
+
+rentabilidades = []
+errores_rentabilidad = []
+
+for i in meses_posteriores:
+
+    precio_venta_g4 = precios_aproximados[i]
+    error_venta_g4 = error_relativo[i]
+
+    dolares_g4 = monto_inicial / precio_compra_g4
+    pesos_final_g4 = dolares_g4 * precio_venta_g4
+    ganancia_g4 = pesos_final_g4 - monto_inicial
+    rentabilidad_g4 = (ganancia_g4 / monto_inicial) * 100
+
+    error_pesos_final_g4 = error_compra_g4 + error_venta_g4
+    error_pesos_final_abs_g4 = (error_pesos_final_g4 / 100) * pesos_final_g4
+    error_rentabilidad_g4 = (error_pesos_final_abs_g4 / monto_inicial) * 100
+
+    rentabilidades.append(rentabilidad_g4)
+    errores_rentabilidad.append(error_rentabilidad_g4)
+
+plt.figure(figsize=(12, 5))
+plt.bar(range(len(rentabilidades)), rentabilidades, yerr=errores_rentabilidad, capsize=3)
+plt.xticks(range(0, len(meses_posteriores), 3), [etiquetas[i] for i in meses_posteriores[::3]], rotation=45)
+plt.title("Rentabilidad comprando en el minimo y vendiendo en cada mes posterior")
+plt.xlabel("Mes de venta")
+plt.ylabel("Rentabilidad")
+plt.tight_layout()
+plt.savefig(os.path.join(carpeta_graficos, "rentabilidad_por_mes.png"))
+plt.close()
